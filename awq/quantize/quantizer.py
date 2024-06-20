@@ -113,12 +113,12 @@ class AwqQuantizer:
 
         return w
 
-    def quantize(self):
+    def quantize(self, all_gpus=False):
         for i in tqdm(range(len(self.modules)), desc="AWQ"):
             # Move module and inputs to correct device
             common_device = next(self.modules[i].parameters()).device
             if common_device is None or str(common_device) == "cpu":
-                if torch.cuda.is_available():
+                if torch.cuda.is_available() and all_gpus:
                     best_device = "cuda:" + str(i % torch.cuda.device_count())
                 else:
                     best_device = get_best_device()
